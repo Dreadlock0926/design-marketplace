@@ -5,9 +5,9 @@ import { useState } from "react";
 
 function RegisterPage() {
   const [emailInUse, setEmailInUse] = useState(0);
+  const [usernameInUse, setUsernameInUse] = useState(0);
 
   const checkEmailValidity = (email: string) => {
-
     const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
     if (email === "") {
@@ -35,13 +35,39 @@ function RegisterPage() {
       });
   };
 
+  const checkUsernameValidity = (username: string) => {
+    if (username === "") {
+      setUsernameInUse(0);
+      return;
+    }
+
+    if (username.length < 4) {
+      setUsernameInUse(3);
+      return;
+    }
+
+    Axios.post("http://localhost:3001/users/usernameValidity", {
+      username: username,
+    })
+      .then((response) => {
+        if (response.data === "Username already taken") {
+          setUsernameInUse(1);
+        } else {
+          setUsernameInUse(2);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="acc-page-body">
       <form className="acc-form">
         <h1>Register</h1>
         <div className="input-fields-container-acc-page">
           <label className="form-input">
-            <div className="email-input-field">
+            <div className="register-input-field">
               <input
                 onChange={(e) => checkEmailValidity(e.target.value)}
                 type="email"
@@ -70,7 +96,25 @@ function RegisterPage() {
             </label>
           </div>
           <label className="form-input">
-            <input type="text" name="username" placeholder="Username" />
+            <div className="register-input-field">
+              <input
+                onChange={(e) => checkUsernameValidity(e.target.value)}
+                type="text"
+                name="username"
+                placeholder="Username"
+              />
+              {usernameInUse === 2 && <span>&#10003;</span>}
+              {usernameInUse === 1 && (
+                <p className="email-text" style={{ color: "red" }}>
+                  Username already in use
+                </p>
+              )}
+              {usernameInUse === 3 && (
+                <p className="email-text" style={{ color: "red" }}>
+                  Invalid Username
+                </p>
+              )}
+            </div>
           </label>
           <label className="form-input">
             <input type="password" name="password" placeholder="Password" />

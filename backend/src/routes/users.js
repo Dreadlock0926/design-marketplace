@@ -31,7 +31,10 @@ router.post("/usernameValidity", (req, res) => {
         return;
       }
       if (results.length > 0) {
-        res.status(409).send("Username already taken");
+        res.status(201).send("Username already taken");
+        return;
+      } else {
+        res.status(200).send("Username available");
         return;
       }
     }

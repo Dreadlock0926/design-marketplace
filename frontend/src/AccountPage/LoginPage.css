@@ -114,17 +114,18 @@
 .email-text {
     font-weight: bold;
     margin-bottom: -5px;
+    font-size: 16px;
 }
 
-.email-input-field input {
+.register-input-field input {
     width: 93%;
 }
 
-.email-input-field {
+.register-input-field {
     position: relative;
 }
 
-.email-input-field span {
+.register-input-field span {
     color: green;
     position: absolute;
     right: 5%;
