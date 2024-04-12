@@ -20,8 +20,8 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/usernameValidity", (req, res) => {
-  const { username } = req.query;
+router.post("/usernameValidity", (req, res) => {
+  const { username } = req?.body;
 
   databaseConnection.query(
     `SELECT * FROM users WHERE username = '${username}'`,
@@ -38,8 +38,8 @@ router.get("/usernameValidity", (req, res) => {
   );
 });
 
-router.get("/emailValidity", (req, res) => {
-  const { email } = req.query;
+router.post("/emailValidity", (req, res) => {
+  const { email } = req?.body;
 
   databaseConnection.query(
     `SELECT * FROM users WHERE email = '${email}'`,
@@ -49,7 +49,10 @@ router.get("/emailValidity", (req, res) => {
         return;
       }
       if (results.length > 0) {
-        res.status(409).send("Email already taken");
+        res.status(201).send("Email already taken");
+        return;
+      } else {
+        res.status(200).send("Email available");
         return;
       }
     }
