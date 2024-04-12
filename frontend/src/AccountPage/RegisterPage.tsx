@@ -43,7 +43,7 @@ function RegisterPage() {
           <label className="form-input">
             <div className="email-input-field">
               <input
-                onBlur={(e) => checkEmailValidity(e.target.value)}
+                onChange={(e) => checkEmailValidity(e.target.value)}
                 type="email"
                 name="email"
                 placeholder="Email"
