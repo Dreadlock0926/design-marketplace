@@ -156,6 +156,6 @@ input:not(:placeholder-shown) {
     color: rgb(202, 0, 0);
 }
 
-.shake {
+.email-input-reg.shake {
     border: 1px solid red;
 }

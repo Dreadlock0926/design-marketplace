@@ -15,6 +15,7 @@ function RegisterPage() {
   });
 
   const emailRef = useRef<HTMLInputElement | null>(null);
+  const usernameRef = useRef<HTMLInputElement | null>(null);
 
   const checkEmailValidity = (email: string) : void => {
     const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -22,6 +23,8 @@ function RegisterPage() {
     if (email === "") {
       setEmailInUse(0);
       return;
+    } else {
+      emailRef.current?.classList.remove("shake");
     }
 
     if (!isValidEmail.test(email)) {
@@ -48,6 +51,8 @@ function RegisterPage() {
     if (username === "") {
       setUsernameInUse(0);
       return;
+    } else {
+      usernameRef.current?.classList.remove("shake");
     }
 
     if (username.length < 4) {
@@ -131,7 +136,14 @@ function RegisterPage() {
     if (emailInUse !== 2) {
       emailRef.current?.focus();
       emailRef.current?.scrollIntoView({ behavior: "smooth" });
-      emailRef.current?.classList.toggle("shake");
+      emailRef.current?.classList.add("shake");
+      return;
+    }
+
+    if (usernameInUse !== 2) {
+      usernameRef.current?.focus();
+      usernameRef.current?.scrollIntoView({ behavior: "smooth" });
+      usernameRef.current?.classList.add("shake");
       return;
     }
   }
@@ -144,6 +156,7 @@ function RegisterPage() {
           <label className="form-input">
             <div className="register-input-field">
               <input
+                className="email-input-reg"
                 onChange={(e) => checkEmailValidity(e.target.value)}
                 ref={emailRef}
                 type="email"
@@ -174,6 +187,8 @@ function RegisterPage() {
           <label className="form-input">
             <div className="register-input-field">
               <input
+                className="email-input-reg"
+                ref={usernameRef}
                 onChange={(e) => checkUsernameValidity(e.target.value)}
                 type="text"
                 name="username"
