@@ -2,12 +2,21 @@ import { Link } from "react-router-dom";
 import Axios from "axios";
 import "./LoginPage.css";
 import { useState } from "react";
+import { useRef } from "react";
 
 function RegisterPage() {
   const [emailInUse, setEmailInUse] = useState(0);
   const [usernameInUse, setUsernameInUse] = useState(0);
+  const [passwordStrength, setPasswordStrength] = useState({
+    hasEightChars: false,
+    hasLowercase: false,
+    hasUppercase: false,
+    hasSpecialChar: false,
+  });
 
-  const checkEmailValidity = (email: string) => {
+  const emailRef = useRef<HTMLInputElement | null>(null);
+
+  const checkEmailValidity = (email: string) : void => {
     const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
     if (email === "") {
@@ -35,7 +44,7 @@ function RegisterPage() {
       });
   };
 
-  const checkUsernameValidity = (username: string) => {
+  const checkUsernameValidity = (username: string) : void => {
     if (username === "") {
       setUsernameInUse(0);
       return;
@@ -61,6 +70,72 @@ function RegisterPage() {
       });
   };
 
+  const detectPasswordStrength = (password: string) : void => {
+    const passwordStrength = {
+      hasLowercase: /[a-z]/,
+      hasUppercase: /[A-Z]/,
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/,
+    };
+
+    if (password.length < 8) {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasEightChars: false,
+      }));
+    } else {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasEightChars: true,
+      }));
+    }
+
+    if (passwordStrength.hasLowercase.test(password)) {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasLowercase: true,
+      }));
+    } else {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasLowercase: false,
+      }));
+    }
+
+    if (passwordStrength.hasUppercase.test(password)) {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasUppercase: true,
+      }));
+    } else {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasUppercase: false,
+      }));
+    }
+
+    if (passwordStrength.hasSpecialChar.test(password)) {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasSpecialChar: true,
+      }));
+    } else {
+      setPasswordStrength((prevState) => ({
+        ...prevState,
+        hasSpecialChar: false,
+      }));
+    }
+  };
+
+  function verifySubmission(): void {
+
+    if (emailInUse !== 2) {
+      emailRef.current?.focus();
+      emailRef.current?.scrollIntoView({ behavior: "smooth" });
+      emailRef.current?.classList.toggle("shake");
+      return;
+    }
+  }
+
   return (
     <div className="acc-page-body">
       <form className="acc-form">
@@ -70,6 +145,7 @@ function RegisterPage() {
             <div className="register-input-field">
               <input
                 onChange={(e) => checkEmailValidity(e.target.value)}
+                ref={emailRef}
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -117,8 +193,65 @@ function RegisterPage() {
             </div>
           </label>
           <label className="form-input">
-            <input type="password" name="password" placeholder="Password" />
+            <input
+              onChange={(e) => {
+                detectPasswordStrength(e.target.value);
+              }}
+              type="password"
+              name="password"
+              placeholder="Password"
+            />
           </label>
+
+          <div className="password-strength-checker">
+            <div className="psc-info-container">
+              {passwordStrength.hasEightChars ? (
+                <div className="psc-info green">
+                  <span>&#10003;</span>
+                  <p>At least 8 characters</p>
+                </div>
+              ) : (
+                <div className="psc-info red">
+                  <span>&#10005;</span>
+                  <p>At least 8 characters</p>
+                </div>
+              )}
+              {passwordStrength.hasLowercase ? (
+                <div className="psc-info green">
+                  <span>&#10003;</span>
+                  <p>At least one lowercase letter</p>
+                </div>
+              ) : (
+                <div className="psc-info red">
+                  <span>&#10005;</span>
+                  <p>At least one lowercase letter</p>
+                </div>
+              )}
+              {passwordStrength.hasUppercase ? (
+                <div className="psc-info green">
+                  <span>&#10003;</span>
+                  <p>At least one uppercase letter</p>
+                </div>
+              ) : (
+                <div className="psc-info red">
+                  <span>&#10005;</span>
+                  <p>At least one uppercase letter</p>
+                </div>
+              )}
+              {passwordStrength.hasSpecialChar ? (
+                <div className="psc-info green">
+                  <span>&#10003;</span>
+                  <p>At least one special character</p>
+                </div>
+              ) : (
+                <div className="psc-info red">
+                  <span>&#10005;</span>
+                  <p>At least one special character</p>
+                </div>
+              )}
+            </div>
+          </div>
+
           <label className="form-input">
             <input
               type="password"
@@ -127,7 +260,7 @@ function RegisterPage() {
             />
           </label>
         </div>
-        <button className="acc-page-submit-btn" type="submit">
+        <button onClick={verifySubmission} type="button" className="acc-page-submit-btn">
           Submit
         </button>
         <h4>
